@@ -5,9 +5,6 @@
 <script>
   import {mapGetters} from 'vuex'
   export default {
-    data () {
-      return {}
-    },
     computed: {
       // getters 最终映射到computed
       // 通过mapGetters 把mapGetters扩展到计算属性里面
