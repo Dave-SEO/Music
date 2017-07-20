@@ -1,11 +1,12 @@
 <template>
-  <div class="singer-detail">1</div>
+  <music-list :title="title" :songs="singerList" :bg-image="bgImage"></music-list>
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
-  import {singerDetail} from '@/api/singer'
-  import {createSong} from 'common/js/song'
+  import { mapGetters } from 'vuex'
+  import { singerDetail } from '@/api/singer'
+  import { createSong } from 'common/js/song'
+  import musicList from 'components/music-list/music-list'
   export default {
     data () {
       return {
@@ -13,6 +14,12 @@
       }
     },
     computed: {
+      title () {
+        return this.singer.name
+      },
+      bgImage () {
+        return this.singer.avator
+      },
       // getters 最终映射到computed
       // 通过mapGetters 把mapGetters扩展到计算属性里面
       ...mapGetters([
@@ -41,17 +48,12 @@
     },
     created () {
       this._singerDetail()
+    },
+    components: {
+      musicList
     }
   }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .singer-detail {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background: #fff;
-  }
 </style>
