@@ -1,6 +1,6 @@
 <template>
     <div class="song-list">
-      <ul>
+      <ul class="songWrap">
         <li v-for="item in songs">
           <div class="content">
             <h2 class="name">{{item.name}}</h2>
@@ -30,5 +30,20 @@
   }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped rel="stylesheet/less" lang="less">
+  .songWrap{
+    padding-bottom: 0.2rem;
+    li{
+      padding:0.5rem 0.2rem 0rem 0.5rem;
+      .content{
+        color:#fff;
+        .name{
+          margin-bottom:0.1rem;
+        }
+      }
+      .desc{
+        color:#ccc;
+      }
+    }
+  }
 </style>

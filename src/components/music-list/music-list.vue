@@ -44,7 +44,7 @@
     position: fixed;
     width: 100%;
     bottom:0;
-    background: #ffffff;
+    background: #000;
   }
   .listWrap {
     position: fixed;
