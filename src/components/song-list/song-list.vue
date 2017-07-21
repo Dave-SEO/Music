@@ -32,6 +32,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped rel="stylesheet/less" lang="less">
   .songWrap{
+    background: #2f2f2f;
     padding-bottom: 0.2rem;
     li{
       padding:0.5rem 0.2rem 0rem 0.5rem;

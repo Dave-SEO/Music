@@ -1,7 +1,9 @@
 <template>
   <div class="listWrap">
-    <div class="top" :style="{'background-image':`url(${bgImage})`}" ref="bgimg"></div>
-    <div class="back"> < </div>
+    <div class="top" :style="{'background-image':`url(${bgImage})`}" ref="bgimg">
+      <div class="player">随机播放全部</div>
+    </div>
+    <div class="back" @click="back"> < </div>
 
     <scroll ref="list" :data="songs" class="list">
       <song-list :songs="songs"></song-list>
@@ -32,6 +34,11 @@
         default: []
       }
     },
+    methods: {
+      back () {
+        this.$router.back()
+      }
+    },
     components: {
       songList,
       scroll
@@ -40,12 +47,13 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less" rel="stylesheet/less">
-  .list{
+  .list {
     position: fixed;
     width: 100%;
-    bottom:0;
-    background: #000;
+    bottom: 0;
+    background: #2f2f2f;
   }
+
   .listWrap {
     position: fixed;
     top: 0;
@@ -58,13 +66,26 @@
       padding-top: 70%;
       height: 0;
       background-size: cover;
+      .player {
+        text-align: center;
+        position: absolute;
+        bottom: 0.5rem;
+        color: #ffcd32;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        width: 2.7rem;
+        padding: 0.14rem 0;
+        border: 1px solid #ffcd32;
+        border-radius: 2rem;
+      }
     }
     .back {
       position: absolute;
       top: 0.2rem;
       left: 0.3rem;
       font-size: 0.7rem;
-      color: #ffffff;
+      color: #ffcd32;
       font-weight: bolder;
     }
   }
