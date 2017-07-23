@@ -1,9 +1,11 @@
 <template>
   <div class="listWrap">
-    <div class="top" :style="{'background-image':`url(${bgImage})`}" ref="bgimg"></div>
+    <div class="top" :style="{'background-image':`url(${bgImage})`}" ref="bgimg">
+      <div class="filter" ref="filter"></div>
+    </div>
     <div class="back"> < </div>
-
-    <scroll ref="list" :data="songs" class="list">
+    <div class="bglayer" ref="bglayer"></div>
+    <scroll ref="list" @scroll="scroll" :data="songs" class="list" :probeType="probeType" :listenScroll="listenScroll">
       <song-list :songs="songs"></song-list>
     </scroll>
 
@@ -14,9 +16,19 @@
   import songList from 'components/song-list/song-list'
   import scroll from '@/base/scrollView'
   export default {
+    data () {
+      return {
+        scrollY: 0
+      }
+    },
+    created () {
+      this.probeType = 3
+      this.listenScroll = true
+    },
     mounted () {
-      this.$refs.list.$el.style.top = `${this.$refs.bgimg.clientHeight}px`
-      console.log('a', this.$refs.list.$el)
+      this.bgheight = this.$refs.bgimg.clientHeight
+      this.minHeight = -this.bgheight + 40
+      this.$refs.list.$el.style.top = `${this.bgheight}px`
     },
     props: {
       title: {
@@ -32,6 +44,42 @@
         default: []
       }
     },
+    methods: {
+      scroll (pos) {
+        this.scrollY = pos.y
+      }
+    },
+    watch: {
+      scrollY (newY) {
+        let translateY = Math.max(this.minHeight, newY)
+        this.$refs.bglayer.style.transform = `translate3d(0,${translateY}px,0)`
+        let zIndex = 0
+        let blur = 0
+        // 缩放
+        let scale = 1
+        const percent = Math.abs(newY / this.minHeight)
+        if (newY > 0) {
+          scale = 1 + percent
+          zIndex = 1
+          console.log(1)
+        } else {
+          console.log(2)
+          blur = Math.min(20 * percent, 20)
+        }
+        this.$refs.bgimg.style.transform = `scale(${scale})`
+        this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
+        this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+        if (newY < this.minHeight) {
+          zIndex = 1
+          this.$refs.bgimg.style.paddingTop = 0
+          this.$refs.bgimg.style.height = 40 + 'px'
+        } else {
+          this.$refs.bgimg.style.paddingTop = '70%'
+          this.$refs.bgimg.style.height = 0
+        }
+        this.$refs.bgimg.style.zIndex = zIndex
+      }
+    },
     components: {
       songList,
       scroll
@@ -40,12 +88,26 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less" rel="stylesheet/less">
-  .list{
+  .bglayer {
+    position: relative;
+    height: 100%;
+    background: #2f2f2f;
+  }
+.filter{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7,17,27,0.4);
+}
+  .list {
     position: fixed;
     width: 100%;
-    bottom:0;
-    background: #ffffff;
+    bottom: 0;
+    background: #2f2f2f;
   }
+
   .listWrap {
     position: fixed;
     top: 0;
@@ -58,6 +120,7 @@
       padding-top: 70%;
       height: 0;
       background-size: cover;
+      transform-origin: top;
     }
     .back {
       position: absolute;
@@ -66,6 +129,7 @@
       font-size: 0.7rem;
       color: #ffffff;
       font-weight: bolder;
+      z-index: 2;
     }
   }
 </style>
