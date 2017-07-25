@@ -15,6 +15,8 @@
 <script>
   import songList from 'components/song-list/song-list'
   import scroll from '@/base/scrollView'
+  import {prefixStyle} from 'common/js/dom'
+  const transform = prefixStyle('transform')
   export default {
     data () {
       return {
@@ -59,7 +61,7 @@
     watch: {
       scrollY (newY) {
         let translateY = Math.max(this.minHeight, newY)
-        this.$refs.bglayer.style.transform = `translate3d(0,${translateY}px,0)`
+        this.$refs.bglayer.style[transform] = `translate3d(0,${translateY}px,0)`
         let zIndex = 0
         let blur = 0
         // 缩放
@@ -68,12 +70,11 @@
         if (newY > 0) {
           scale = 1 + percent
           zIndex = 1
-          console.log(1)
         } else {
           blur = Math.min(20 * percent, 20)
         }
         this.$refs.bgimg.style.transform = `scale(${scale})`
-        this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
+        this.$refs.filter.style[transform] = `blur(${blur}px)`
         this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
         if (newY < this.minHeight) {
           zIndex = 1
@@ -141,7 +142,7 @@
     }
     .back {
       position: absolute;
-      top: 0.2rem;
+      top: 0.1rem;
       left: 0.3rem;
       font-size: 0.7rem;
       color: #ffcd32;
