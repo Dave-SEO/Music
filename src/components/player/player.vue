@@ -1,8 +1,8 @@
 <template>
   <div class="player">
-    <div class="normal-player">
+    <div class="normal-player" v-show="fullScreen">
       <div class="top">
-        <div class="back">∨</div>
+        <div class="back" @click="back()">∨</div>
         <div class="title">wangsulun</div>
         <div class="name">zhoujielun</div>
       </div>
@@ -10,22 +10,38 @@
 
       </div>
     </div>
-    <div class="mini-player"></div>
+    <div class="mini-player" v-show="!fullScreen"></div>
   </div>
 </template>
 <script>
-  export default {}
+  import {mapGetters, mapMutations} from 'vuex'
+  export default {
+    computed: {
+      ...mapGetters([
+        'currentIndex',
+        'fullScreen',
+        'playing'
+      ])
+    },
+    methods: {
+      back () {
+        this.setFullScreen(false)
+      },
+      ...mapMutations({
+        setFullScreen: 'SET_FULL_SCREEN'
+      })
+    }
+  }
 </script>
 <style lang="less" rel="stylesheet/less" scoped>
   .player{
-    position: absolute;
-    width: 100%;
-    top:0;
-    bottom: 0;
-    background: #2f2f2f;
-    z-index: 1;
     .normal-player{
-      position: relative;
+      position:fixed;
+      width: 100%;
+      top:0;
+      bottom: 0;
+      background: #2f2f2f;
+      z-index: 1;
       .top{
         .back{
           position: absolute;
@@ -60,6 +76,7 @@
       left:0;
       height:60px;
       bottom: 0;
+      z-index:1;
       background: #333;
     }
   }
