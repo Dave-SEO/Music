@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playlist.length > 0">
     <div class="normal-player" v-show="fullScreen">
       <div class="top">
         <div class="back" @click="back()">∨</div>
@@ -20,7 +20,8 @@
       ...mapGetters([
         'currentIndex',
         'fullScreen',
-        'playing'
+        'playing',
+        'playlist'
       ])
     },
     methods: {

@@ -7,7 +7,7 @@
     <div class="back" @click="back"> < </div>
     <div class="bglayer" ref="bglayer"></div>
     <scroll ref="list" @scroll="scroll" :data="songs" class="list" :probeType="probeType" :listenScroll="listenScroll">
-      <song-list :songs="songs"></song-list>
+      <song-list :songs="songs" @select="selectItem"></song-list>
     </scroll>
   </div>
 </template>
@@ -15,7 +15,8 @@
 <script>
   import songList from 'components/song-list/song-list'
   import scroll from '@/base/scrollView'
-  import {prefixStyle} from 'common/js/dom'
+  import { prefixStyle } from 'common/js/dom'
+  import {mapActions} from 'vuex'
   const transform = prefixStyle('transform')
   export default {
     data () {
@@ -52,7 +53,16 @@
       },
       back () {
         this.$router.back()
-      }
+      },
+      selectItem (item, index) {
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
+      ...mapActions([
+        'selectPlay'
+      ])
     },
     components: {
       songList,
@@ -98,14 +108,16 @@
     height: 100%;
     background: #2f2f2f;
   }
-.filter{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(7,17,27,0.4);
-}
+
+  .filter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 17, 27, 0.4);
+  }
+
   .list {
     position: fixed;
     width: 100%;
