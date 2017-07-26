@@ -7,7 +7,7 @@
     <div class="back" @click="back"> < </div>
     <div class="bglayer" ref="bglayer"></div>
     <scroll ref="list" @scroll="scroll" :data="songs" class="list" :probeType="probeType" :listenScroll="listenScroll">
-      <song-list :songs="songs"></song-list>
+      <song-list :songs="songs" @select="selectItem"></song-list>
     </scroll>
   </div>
 </template>
@@ -52,6 +52,9 @@
       },
       back () {
         this.$router.back()
+      },
+      selectItem (song, i) {
+        console.log('.', song, i)
       }
     },
     components: {
