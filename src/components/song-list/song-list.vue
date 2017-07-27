@@ -19,6 +19,7 @@
       },
       select (item, index) {
         this.$emit('select', item, index)
+        console.log(index)
       }
     },
     props: {
