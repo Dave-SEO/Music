@@ -3,30 +3,37 @@
     <div class="normal-player" v-show="fullScreen">
       <div class="top">
         <div class="back" @click="back()">∨</div>
-        <div class="title">wangsulun</div>
-        <div class="name">zhoujielun</div>
+        <div class="title" v-html="currentSong.singer"></div>
+        <div class="name" v-html="currentSong.name"></div>
       </div>
       <div class="middle">
-
+        <img :src="currentSong.image" alt="">
       </div>
     </div>
-    <div class="mini-player" v-show="!fullScreen"></div>
+    <div class="mini-player" v-show="!fullScreen" @click="open"></div>
   </div>
 </template>
 <script>
   import {mapGetters, mapMutations} from 'vuex'
   export default {
+    mounted () {
+      console.log(this.currentSong)
+    },
     computed: {
       ...mapGetters([
         'currentIndex',
         'fullScreen',
         'playing',
-        'playlist'
+        'playlist',
+        'currentSong'
       ])
     },
     methods: {
       back () {
         this.setFullScreen(false)
+      },
+      open () {
+        this.setFullScreen(true)
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN'
@@ -44,6 +51,8 @@
       background: #2f2f2f;
       z-index: 1;
       .top{
+        margin-bottom:25px;
+        position: relative;
         .back{
           position: absolute;
           top: 0.2rem;
@@ -67,8 +76,15 @@
       .middle{
         width: 100%;
         position: fixed;
-        top: 1.3rem;
+        top: 1.9rem;
         bottom: 6rem;
+        img{
+          width:80%;
+          margin:0 auto;
+          border-radius: 50%;
+          display: block;
+          border:10px solid rgba(255,255,255,0.1);
+        }
       }
     }
     .mini-player{
