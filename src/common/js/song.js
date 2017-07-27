@@ -33,6 +33,6 @@ function filterSinger (singer) {
   singer.forEach((s) => {
     ret.push(s.name)
   })
-  console.log(ret)
+  console.log('***', ret)
   return ret.join('/')
 }

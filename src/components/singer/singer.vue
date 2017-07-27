@@ -35,7 +35,6 @@
         singer().then((res) => {
           if (res.code === ERR_OK) {
             this.singers = this._filterSinger(res.data.list)
-            console.log(res.data.list)
           }
         })
       },
@@ -65,7 +64,6 @@
             name: item.Fsinger_name
           }))
         })
-        console.log('/', map)
         // 对map排序 // 拆分ret hot
         let ret = []
         let hot = []
@@ -77,12 +75,10 @@
             hot.push(val)
           }
         }
-        console.log(',', ret)
         // 对 ret 排序
         ret.sort((a, b) => {
           return a.title.charCodeAt(0) - b.title.charCodeAt(0)
         })
-        console.log('ret', ret)
         // 合并ret hot 数组
         let merge = hot.concat(ret)
         console.log('m', merge)

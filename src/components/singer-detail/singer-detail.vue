@@ -31,7 +31,6 @@
         singerDetail(this.singer.id).then(res => {
           if (res.code === 0) {
             this.singerList = this._normalizeSinger(res.data.list)
-            console.log('///////', this.singerList)
           }
         })
       },
