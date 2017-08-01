@@ -1,6 +1,9 @@
 <template>
   <div class="player" v-show="playlist.length > 0">
-    <transition name="normal">
+    <transition name="normal"
+                @enter="enter"
+                @after-enter="afterEnter"
+    >
       <div class="normal-player" v-show="fullScreen">
         <div class="top">
           <div class="back" @click="back()">∨</div>
@@ -8,18 +11,25 @@
           <div class="name" v-html="currentSong.name"></div>
         </div>
         <div class="middle">
-          <img :src="currentSong.image" alt="">
+          <img :src="currentSong.image" alt="" ref="cdWrapper">
         </div>
       </div>
     </transition>
 
     <transition name="mini">
-      <div class="mini-player" v-show="!fullScreen" @click="open"></div>
+      <div class="mini-player" v-show="!fullScreen" @click="open">
+        <img :src="currentSong.image" class="img" alt="">
+        <div class="album">
+          <p v-html="currentSong.singer"></p>
+          <span v-html="currentSong.name"></span>
+        </div>
+      </div>
     </transition>
   </div>
 </template>
 <script>
   import {mapGetters, mapMutations} from 'vuex'
+  import animations from 'create-keyframe-animation'
   export default {
     mounted () {
       console.log(this.currentSong)
@@ -36,6 +46,45 @@
     methods: {
       back () {
         this.setFullScreen(false)
+      },
+      enter (el, done) {
+        const {x, y, scale} = this._getPosAndScale()
+        let animation = {
+          0: {
+            transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+          },
+          60: {
+            transform: `translate3d(0,0,0) scale(1.1)`
+          },
+          100: {
+            transform: `translate3d(0,0,0) scale(1)`
+          }
+        }
+        animations.registerAnimation({
+          name: 'move',
+          animation,
+          presets: {
+            duration: 400,
+            easing: 'linear'
+          }
+        })
+
+        animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+      },
+      afterEnter () {
+        animations.unregisterAnimation('move')
+        this.$refs.cdWrapper.style.animation = ''
+      },
+      _getPosAndScale () {
+        const targetWidth = 40
+        const paddingLeft = 18
+        const paddingBottom = 20
+        const paddingTop = 80
+        const width = window.innerWidth * 0.8
+        const scale = targetWidth / width
+        const x = -(window.innerWidth / 2 - paddingLeft)
+        const y = window.innerHeight - paddingTop - window.innerHeight / 2 - paddingBottom
+        return {x, y, scale}
       },
       open () {
         this.setFullScreen(true)
@@ -112,6 +161,23 @@
       bottom: 0;
       z-index:1;
       background: #333;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding-left:18px;
+      .img{
+        width:40px;
+        border-radius:50%;
+      }
+      .album{
+        margin-left:10px;
+        p{
+          color:#fff;
+        }
+        span{
+          color:#fff;
+        }
+      }
     }
   }
 </style>
