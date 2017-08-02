@@ -33,7 +33,7 @@
           <p v-html="currentSong.singer"></p>
           <span v-html="currentSong.name"></span>
         </div>
-        <div class="control ">
+        <div class="control">
           <i class="music-icon icon-playlist"></i>
         </div>
       </div>
@@ -223,6 +223,13 @@
         }
         span{
           color:#fff;
+        }
+      }
+      .control{
+        padding:0 10px;
+        i{
+          font-size: 30px;
+          color:orange;
         }
       }
     }
