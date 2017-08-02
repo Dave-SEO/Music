@@ -16,9 +16,18 @@
           <div class="box">
             <div class="cdWrapper" ref="cdWrapper">
               <div class="imgBox" >
-                <img :src="currentSong.image" alt="" >
+                <img :src="currentSong.image" alt=""  :class="cdCls">
               </div>
             </div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="operators">
+            <div  class="icon i-left"><i  class="icon-sequence"></i></div>
+            <div class="icon i-left"><i class="icon-prev"></i></div>
+            <div class="icon i-center" @click="togglePlay"><i :class="playIcon"></i></div>
+            <div class="icon i-right"><i  class="icon-next"></i></div>
+            <div class="icon i-right"><i class="icon icon-not-favorite"></i></div>
           </div>
         </div>
       </div>
@@ -26,18 +35,22 @@
 
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
-        <div class="miniImg">
-          <img :src="currentSong.image" class="img" alt="">
+        <div class="miniImg imgBox">
+          <img :src="currentSong.image" class="img" alt="" :class="cdCls">
         </div>
         <div class="album">
           <p v-html="currentSong.singer"></p>
           <span v-html="currentSong.name"></span>
         </div>
         <div class="control">
-          <i class="music-icon icon-playlist"></i>
+          <i class="icon-mini icon-play-mini" :class="miniIcon" @click.stop="togglePlay"></i>
+        </div>
+        <div class="control">
+          <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 <script>
@@ -48,6 +61,15 @@
       console.log(this.currentSong)
     },
     computed: {
+      cdCls () {
+        return this.playing ? 'play' : 'play pause'
+      },
+      playIcon () {
+        return this.playing ? 'icon-pause' : 'icon-play'
+      },
+      miniIcon () {
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+      },
       ...mapGetters([
         'currentIndex',
         'fullScreen',
@@ -112,9 +134,26 @@
       open () {
         this.setFullScreen(true)
       },
+      togglePlay () {
+        this.setPlayingstate(!this.playing)
+      },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN'
+        setFullScreen: 'SET_FULL_SCREEN',
+        setPlayingstate: 'SET_PLAYING_STATE'
       })
+    },
+    watch: {
+      currentSong () {
+        this.$nextTick(() => {
+          this.$refs.audio.play()
+        })
+      },
+      playing (newPlay) {
+        const audio = this.$refs.audio
+        this.$nextTick(() => {
+          newPlay ? audio.play() : audio.pause()
+        })
+      }
     }
   }
 </script>
@@ -178,10 +217,6 @@
           box-sizing: border-box;
           border: 10px solid rgba(255,255,255,0.1);
           border-radius: 50%;
-          img{
-            border-radius: 50%;
-            width:100%;
-          }
         }
       }
       &.normal-enter-active,&.normal-leave-active{
@@ -195,6 +230,45 @@
         .top{
           transform:translate3d(0,-100px,0);
         }
+      }
+      .bottom{
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+        .operators{
+          display: flex;
+          align-items: center;
+          .icon{
+            flex: 1;
+            color: #ffcd32;
+            i{
+              font-size: 30px;
+            }
+          }
+          .i-left{
+            text-align: right;
+          }
+          .i-center{
+            padding: 0 20px;
+            text-align: center;
+            i{
+              font-size: 40px;
+            }
+          }
+          .i-right{
+            text-align: left;
+          }
+        }
+      }
+    }
+   .imgBox img{
+      border-radius: 50%;
+      width:100%;
+      &.play{
+        animation: rotate 10s linear infinite
+      }
+      &.pause{
+        animation-play-state: paused
       }
     }
     .mini-player{
@@ -232,6 +306,14 @@
           color:orange;
         }
       }
+    }
+  }
+  @keyframes rotate{
+    0%{
+      transform: rotate(0)
+    }
+    100%{
+      transform: rotate(360deg)
     }
   }
 </style>
