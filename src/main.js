@@ -6,6 +6,7 @@ import fastclick from 'fastclick'
 import lazyload from 'vue-lazyload'
 import 'common/js/rem.js'
 import store from './store'
+import 'common/less/icon.less'
 Vue.config.productionTip = false
 Vue.use(lazyload, {
   loading: require('common/images/0.jpg')

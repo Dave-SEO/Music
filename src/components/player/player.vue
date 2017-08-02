@@ -3,6 +3,8 @@
     <transition name="normal"
                 @enter="enter"
                 @after-enter="afterEnter"
+                @leave="leave"
+                @after-leave = 'afterLeave'
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="top">
@@ -11,17 +13,28 @@
           <div class="name" v-html="currentSong.name"></div>
         </div>
         <div class="middle">
-          <img :src="currentSong.image" alt="" ref="cdWrapper">
+          <div class="box">
+            <div class="cdWrapper" ref="cdWrapper">
+              <div class="imgBox" >
+                <img :src="currentSong.image" alt="" >
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </transition>
 
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
-        <img :src="currentSong.image" class="img" alt="">
+        <div class="miniImg">
+          <img :src="currentSong.image" class="img" alt="">
+        </div>
         <div class="album">
           <p v-html="currentSong.singer"></p>
           <span v-html="currentSong.name"></span>
+        </div>
+        <div class="control ">
+          <i class="music-icon icon-playlist"></i>
         </div>
       </div>
     </transition>
@@ -75,15 +88,25 @@
         animations.unregisterAnimation('move')
         this.$refs.cdWrapper.style.animation = ''
       },
+      leave (el, done) {
+        this.$refs.cdWrapper.style.transition = 'all 0.4s'
+        const {x, y, scale} = this._getPosAndScale()
+        this.$refs.cdWrapper.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale})`
+        this.$refs.cdWrapper.addEventListener('transitionend', done)
+      },
+      afterLeave () {
+        this.$refs.cdWrapper.style.transition = ''
+        this.$refs.cdWrapper.style.transform = ''
+      },
       _getPosAndScale () {
         const targetWidth = 40
-        const paddingLeft = 18
-        const paddingBottom = 20
+        const paddingLeft = 40
+        const paddingBottom = 30
         const paddingTop = 80
         const width = window.innerWidth * 0.8
         const scale = targetWidth / width
         const x = -(window.innerWidth / 2 - paddingLeft)
-        const y = window.innerHeight - paddingTop - window.innerHeight / 2 - paddingBottom
+        const y = (window.innerHeight - paddingTop - width / 2 - paddingBottom)
         return {x, y, scale}
       },
       open () {
@@ -128,16 +151,37 @@
         }
       }
       .middle{
-        width: 100%;
         position: fixed;
-        top: 1.9rem;
-        bottom: 6rem;
-        img{
-          width:80%;
-          margin:0 auto;
+        width: 100%;
+        top: 80px;
+        bottom: 170px;
+        white-space: nowrap;
+        font-size: 0;
+        .box{
+          display: inline-block;
+          vertical-align: top;
+          position: relative;
+          width: 100%;
+          height: 0;
+          padding-top: 80%;
+        }
+        .cdWrapper{
+          position: absolute;
+          left: 10%;
+          top: 0;
+          width: 80%;
+          height: 100%;
+        }
+        .imgBox{
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          border: 10px solid rgba(255,255,255,0.1);
           border-radius: 50%;
-          display: block;
-          border:10px solid rgba(255,255,255,0.1);
+          img{
+            border-radius: 50%;
+            width:100%;
+          }
         }
       }
       &.normal-enter-active,&.normal-leave-active{
@@ -164,12 +208,15 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      padding-left:18px;
+      .miniImg{
+        padding: 0 10px 0 20px;
+      }
       .img{
         width:40px;
         border-radius:50%;
       }
       .album{
+        flex:1;
         margin-left:10px;
         p{
           color:#fff;
