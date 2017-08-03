@@ -4,7 +4,7 @@
                 @enter="enter"
                 @after-enter="afterEnter"
                 @leave="leave"
-                @after-leave = 'afterLeave'
+                @after-leave='afterLeave'
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="top">
@@ -15,18 +15,19 @@
         <div class="middle">
           <div class="box">
             <div class="cdWrapper" ref="cdWrapper">
-              <div class="imgBox" >
-                <img :src="currentSong.image" alt=""  :class="cdCls">
+              <div class="imgBox">
+                <img :src="currentSong.image" alt="" :class="cdCls">
               </div>
             </div>
           </div>
         </div>
         <div class="bottom">
+          {{formate(currentTime)}} --- {{formate(currentSong.duration)}}
           <div class="operators">
-            <div  class="icon i-left"><i  class="icon-sequence"></i></div>
+            <div class="icon i-left"><i class="icon-sequence"></i></div>
             <div class="icon i-left"><i class="icon-prev" @click="prevPlayer"></i></div>
             <div class="icon i-center" @click="togglePlay"><i :class="playIcon"></i></div>
-            <div class="icon i-right"><i  class="icon-next" @click="nextPlayer"></i></div>
+            <div class="icon i-right"><i class="icon-next" @click="nextPlayer"></i></div>
             <div class="icon i-right"><i class="icon icon-not-favorite"></i></div>
           </div>
         </div>
@@ -50,15 +51,21 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
   </div>
 </template>
 <script>
-  import {mapGetters, mapMutations} from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   import animations from 'create-keyframe-animation'
   export default {
+    data () {
+      return {
+        readySong: false,
+        currentTime: 0
+      }
+    },
     mounted () {
-      console.log(this.currentSong)
+      console.log('aaaaa', this.currentSong)
     },
     computed: {
       cdCls () {
@@ -82,7 +89,30 @@
       back () {
         this.setFullScreen(false)
       },
+      updateTime (e) {
+        this.currentTime = e.target.currentTime
+      },
+      formate (time) {
+        time = time | 0
+        let minute = time / 60 | 0
+        let second = this._pad(time % 60)
+        return `${minute}:${second}`
+      },
+      _pad (num, n = 2) {
+        let len = num.toString().length
+        while (len < 2) {
+          num = '0' + num
+          len++
+        }
+        return num
+      },
+      ready () {
+        this.readySong = true
+      },
       prevPlayer () {
+        if (!this.readySong) {
+          return
+        }
         let index = this.currentIndex - 1
         if (index === -1) {
           index = this.playlist.length - 1
@@ -91,8 +121,12 @@
         if (!this.playing) {
           this.togglePlay()
         }
+        this.readySong = false
       },
       nextPlayer () {
+        if (!this.readySong) {
+          return
+        }
         let index = this.currentIndex + 1
         if (index === this.playlist.length) {
           index = 0
@@ -101,7 +135,9 @@
         if (!this.playing) {
           this.togglePlay()
         }
+        this.readySong = false
       },
+      error () {},
       enter (el, done) {
         const {x, y, scale} = this._getPosAndScale()
         let animation = {
@@ -179,45 +215,45 @@
   }
 </script>
 <style lang="less" rel="stylesheet/less" scoped>
-  .player{
-    .normal-player{
-      position:fixed;
+  .player {
+    .normal-player {
+      position: fixed;
       width: 100%;
-      top:0;
+      top: 0;
       bottom: 0;
       background: #2f2f2f;
       z-index: 1;
-      .top{
-        margin-bottom:25px;
+      .top {
+        margin-bottom: 25px;
         position: relative;
-        .back{
+        .back {
           position: absolute;
           top: 0.2rem;
           left: 0.3rem;
-          color:#FFCD32;
-          font-size:0.6rem;
+          color: #FFCD32;
+          font-size: 0.6rem;
         }
-        .title{
-          width:70%;
+        .title {
+          width: 70%;
           text-align: center;
-          color:#fff;
-          line-height:40px;
-          margin:0 auto;
+          color: #fff;
+          line-height: 40px;
+          margin: 0 auto;
           font-size: 0.4rem;
         }
-        .name{
-          color:#fff;
+        .name {
+          color: #fff;
           text-align: center;
         }
       }
-      .middle{
+      .middle {
         position: fixed;
         width: 100%;
         top: 80px;
         bottom: 170px;
         white-space: nowrap;
         font-size: 0;
-        .box{
+        .box {
           display: inline-block;
           vertical-align: top;
           position: relative;
@@ -225,115 +261,116 @@
           height: 0;
           padding-top: 80%;
         }
-        .cdWrapper{
+        .cdWrapper {
           position: absolute;
           left: 10%;
           top: 0;
           width: 80%;
           height: 100%;
         }
-        .imgBox{
+        .imgBox {
           width: 100%;
           height: 100%;
           box-sizing: border-box;
-          border: 10px solid rgba(255,255,255,0.1);
+          border: 10px solid rgba(255, 255, 255, 0.1);
           border-radius: 50%;
         }
       }
-      &.normal-enter-active,&.normal-leave-active{
-        transition:all 0.4s;
-        .top{
-          transition:all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
+      &.normal-enter-active, &.normal-leave-active {
+        transition: all 0.4s;
+        .top {
+          transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
         }
       }
-      &.normal-enter,&.normal-leave-to{
+      &.normal-enter, &.normal-leave-to {
         opacity: 0;
-        .top{
-          transform:translate3d(0,-100px,0);
+        .top {
+          transform: translate3d(0, -100px, 0);
         }
       }
-      .bottom{
+      .bottom {
         position: absolute;
         bottom: 50px;
         width: 100%;
-        .operators{
+        .operators {
           display: flex;
           align-items: center;
-          .icon{
+          .icon {
             flex: 1;
             color: #ffcd32;
-            i{
+            i {
               font-size: 30px;
             }
           }
-          .i-left{
+          .i-left {
             text-align: right;
           }
-          .i-center{
+          .i-center {
             padding: 0 20px;
             text-align: center;
-            i{
+            i {
               font-size: 40px;
             }
           }
-          .i-right{
+          .i-right {
             text-align: left;
           }
         }
       }
     }
-   .imgBox img{
+    .imgBox img {
       border-radius: 50%;
-      width:100%;
-      &.play{
+      width: 100%;
+      &.play {
         animation: rotate 10s linear infinite
       }
-      &.pause{
+      &.pause {
         animation-play-state: paused
       }
     }
-    .mini-player{
+    .mini-player {
       position: fixed;
-      width:100%;
-      left:0;
-      height:60px;
+      width: 100%;
+      left: 0;
+      height: 60px;
       bottom: 0;
-      z-index:1;
+      z-index: 1;
       background: #333;
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      .miniImg{
+      .miniImg {
         padding: 0 10px 0 20px;
       }
-      .img{
-        width:40px;
-        border-radius:50%;
+      .img {
+        width: 40px;
+        border-radius: 50%;
       }
-      .album{
-        flex:1;
-        margin-left:10px;
-        p{
-          color:#fff;
+      .album {
+        flex: 1;
+        margin-left: 10px;
+        p {
+          color: #fff;
         }
-        span{
-          color:#fff;
+        span {
+          color: #fff;
         }
       }
-      .control{
-        padding:0 10px;
-        i{
+      .control {
+        padding: 0 10px;
+        i {
           font-size: 30px;
-          color:orange;
+          color: orange;
         }
       }
     }
   }
-  @keyframes rotate{
-    0%{
+
+  @keyframes rotate {
+    0% {
       transform: rotate(0)
     }
-    100%{
+    100% {
       transform: rotate(360deg)
     }
   }
