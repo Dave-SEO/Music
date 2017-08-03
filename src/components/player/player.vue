@@ -24,9 +24,9 @@
         <div class="bottom">
           <div class="operators">
             <div  class="icon i-left"><i  class="icon-sequence"></i></div>
-            <div class="icon i-left"><i class="icon-prev"></i></div>
+            <div class="icon i-left"><i class="icon-prev" @click="prevPlayer"></i></div>
             <div class="icon i-center" @click="togglePlay"><i :class="playIcon"></i></div>
-            <div class="icon i-right"><i  class="icon-next"></i></div>
+            <div class="icon i-right"><i  class="icon-next" @click="nextPlayer"></i></div>
             <div class="icon i-right"><i class="icon icon-not-favorite"></i></div>
           </div>
         </div>
@@ -81,6 +81,26 @@
     methods: {
       back () {
         this.setFullScreen(false)
+      },
+      prevPlayer () {
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlay()
+        }
+      },
+      nextPlayer () {
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlay()
+        }
       },
       enter (el, done) {
         const {x, y, scale} = this._getPosAndScale()
@@ -139,7 +159,8 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingstate: 'SET_PLAYING_STATE'
+        setPlayingstate: 'SET_PLAYING_STATE',
+        setCurrentIndex: 'SET_CURRENT_INDEX'
       })
     },
     watch: {
