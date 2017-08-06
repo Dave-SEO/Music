@@ -22,7 +22,12 @@
           </div>
         </div>
         <div class="bottom">
-          {{formate(currentTime)}} --- {{formate(currentSong.duration)}}
+          <div class="progress-wrap">
+            <span class="startTime">{{formate(currentTime)}}</span>
+            <progressBar :percent="percent" @percentChange="triggerPercent"></progressBar>
+            <span class="endTime">{{formate(currentSong.duration)}}</span>
+          </div>
+
           <div class="operators">
             <div class="icon i-left"><i class="icon-sequence"></i></div>
             <div class="icon i-left"><i class="icon-prev" @click="prevPlayer"></i></div>
@@ -57,6 +62,7 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import animations from 'create-keyframe-animation'
+  import progressBar from '@/base/progress-bar/progress-bar'
   export default {
     data () {
       return {
@@ -68,6 +74,9 @@
       console.log('aaaaa', this.currentSong)
     },
     computed: {
+      percent () {
+        return this.currentTime / this.currentSong.duration
+      },
       cdCls () {
         return this.playing ? 'play' : 'play pause'
       },
@@ -105,6 +114,12 @@
           len++
         }
         return num
+      },
+      triggerPercent (percent) {
+        this.$refs.audio.currentTime = this.currentSong.duration * percent
+        if (!this.playing) {
+          this.togglePlay()
+        }
       },
       ready () {
         this.readySong = true
@@ -211,10 +226,26 @@
           newPlay ? audio.play() : audio.pause()
         })
       }
+    },
+    components: {
+      progressBar
     }
   }
 </script>
 <style lang="less" rel="stylesheet/less" scoped>
+  .progress-wrap{
+    padding:10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:80%;
+    margin:0 auto;
+    text-align: center;
+    span{
+      color:#fff;
+      flex: 0 0 30px;
+    }
+  }
   .player {
     .normal-player {
       position: fixed;
