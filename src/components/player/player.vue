@@ -398,11 +398,14 @@
       .control {
         padding: 0 10px;
         i {
-          position: absolute;
-          top:0;
-          left:0;
           font-size: 30px;
           color: orange;
+        }
+        .icon-mini{
+          position: absolute;
+          top:2px;
+          left:1px;
+          color: rgba(255,205,49,0.5);
         }
       }
     }

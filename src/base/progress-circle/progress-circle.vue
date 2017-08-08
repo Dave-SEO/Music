@@ -13,13 +13,13 @@
   export default {
     data () {
       return {
-        dashArray: Math.PI * 2
+        dashArray: Math.PI * 100
       }
     },
     props: {
       radius: {
         type: Number,
-        default: 0
+        default: 100
       },
       percent: {
         type: Number,
@@ -44,10 +44,10 @@
   }
   .progress-background{
     transform: scale(0.9);
-    stroke: gold
+    stroke: rgba(255,205,49,0.5);
   }
   .progress-bar{
     transform: scale(0.9) rotate(-90deg);
-    stroke: gold
+    stroke: orange
   }
 </style>
