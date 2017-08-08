@@ -26,5 +26,5 @@ npm run e2e
 # run all tests
 npm test
 ```
-
+# 关于seo http://www.jianshu.com/p/65b42f6215ff?utm_campaign=haruki&utm_content=note&utm_medium=reader_share&utm_source=qq
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
